@@ -185,8 +185,7 @@
 	});
 
 	const sx = {
-		button: 'rounded-md bg-white/5- px-2.5 py-1.5 hover:bg-white/15',
-		icon_button: '!p-2.5 flex items-center justify-center text-lg'
+		button: 'rounded-md bg-white/5 px-2 py-1 hover:bg-white/15'
 	};
 </script>
 
@@ -204,56 +203,55 @@
 </div> -->
 
 <Menu />
-<div class="flex h-screen font-medium">
+<div class="flex h-screen">
 	{#each palette as color, i}
-		<div
-			class={['group/color relative h-full min-w-42 flex-1']}
-			style="background-color: {color.hex};"
-		>
+		<div class={['group/color relative h-full flex-1']} style="background-color: {color.hex};">
 			{#if i == 0}
 				<AddColorButton first onclick={() => add_color(0)} />
 			{/if}
 
 			<div class={['pointer-events-none relative z-40 flex h-full items-end']}>
 				<div
-					class={['py-1.5- pointer-events-auto w-full rounded px-2.5 pb-2']}
+					class={['pointer-events-auto w-full rounded px-2.5 py-1.5 pb-2']}
 					style="background-color: {scale.color == color ? color.hex : 'transparent'}"
 				>
-					<div class={['space-y-8 pb-16', color.dark && 'invert']}>
-						<div class=" group-hover/color:opacity-100">
-							<!-- <button class={[sx.button, 'mt-2 flex w-full items-center justify-center gap-1.5']}>
-									<span class="col-span-2">{color.hex}</span>
-								</button> -->
-
+					<div class={['space-y-2 pb-4', color.dark && 'invert']}>
+						<div>
 							<div class="grid grid-cols-3 gap-1">
-								<button class={[sx.button, sx.icon_button]}>
-									<IconEdit />
-								</button>
-								<!-- <button class={[sx.card]}>
-										<IconMore />
-									</button> -->
-								<button class={[sx.button, sx.icon_button]}>
-									<IconCopy />
-								</button>
-								<button class={[sx.button, sx.icon_button]} onclick={() => delete_color(color)}>
-									<IconClose />
-								</button>
-
 								{#each ['h', 'v', 's'] as param}
-									<button class={[sx.button]} onclick={() => set_shader(color, param)}>
+									<button class={sx.button} onclick={() => set_shader(color, param)}>
 										{color[param]}
 									</button>
 								{/each}
 							</div>
+							<!-- <button class={[sx.button, 'mt-2 flex w-full items-center justify-center gap-1.5']}>
+								<span class="col-span-2">{color.hex}</span>
+							</button> -->
 						</div>
-						<input
-							onblur={(ev) => update_color_name(i, ev.currentTarget.value)}
-							class={[
-								'w-full rounded-md px-2 py-1 text-center text-lg ring-0 ring-white/30 outline-0 focus:ring-1'
-							]}
-							type="text"
-							value={color.name}
-						/>
+
+						<div class="space-y-2">
+							<input
+								onblur={(ev) => update_color_name(i, ev.currentTarget.value)}
+								class={[sx.button, 'w-full text-left']}
+								type="text"
+								value={color.name}
+							/>
+
+							<div class="flex items-center justify-between gap-1">
+								<button class={[sx.button, '!p-1.5 text-xl']}>
+									<IconEdit />
+								</button>
+								<button class={[sx.button, '!p-1.5 text-xl']}>
+									<IconMore />
+								</button>
+								<button class={[sx.button, '!p-1.5 text-xl']}>
+									<IconCopy />
+								</button>
+								<button onclick={() => delete_color(color)} class={[sx.button, '!p-1.5 text-xl']}>
+									<IconClose />
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<title>Color Palette</title>
 </svelte:head>
 
 {@render children?.()}

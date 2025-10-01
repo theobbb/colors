@@ -1,6 +1,6 @@
 <script>
 	import { raw_colors } from '$lib/assets/raw-colors';
-	import { processed_colors } from '$lib/utils';
+	import { processed_colors } from '$lib/color/utils';
 
 	let colors = $state(processed_colors);
 
