@@ -7,9 +7,9 @@
 	import { generate_color, generate_scale, get_middle_color } from '$lib/color/manager';
 	import IconCopy from '$lib/assets/icons/icon-copy.svelte';
 	import IconEdit from '$lib/assets/icons/icon-edit.svelte';
-	import { load_palette, PALETTE, save_palette, type Palette } from '$lib/palettes.svelte';
+	import { save_palette, type Palette } from '$lib/palettes.svelte';
 
-	const palette: Palette | null = $derived(PALETTE.current);
+	const { palette }: { palette: Palette } = $props();
 
 	const scale: {
 		color: Color | null;
@@ -72,8 +72,6 @@
 	// }
 
 	function update_color_name(index: number, value: string) {
-		if (!palette) return;
-
 		if (palette.colors[index].name == value) return;
 		palette.colors[index].name = value;
 		save_palette(palette);
@@ -87,8 +85,6 @@
 	}
 
 	function replace_color(from: Color, to: Color) {
-		if (!palette) return;
-
 		const index = palette.colors.indexOf(from);
 		if (index == -1) return;
 		palette.colors[index] = to;
@@ -100,15 +96,11 @@
 	}
 
 	function delete_color(color: Color) {
-		if (!palette) return;
-
 		palette.colors = palette.colors.filter((c) => c != color);
 		save_palette(palette);
 	}
 
 	function add_color(index: number) {
-		if (!palette) return;
-
 		let color1_hex: string;
 		let color2_hex: string;
 
@@ -165,7 +157,7 @@
 		set_shader(scale.color, scale.param, scale.step_size + 1);
 	}
 
-	function onmousewheel(ev: WheelEvent) {
+	function onmousewheel(ev) {
 		if (!scale.color) return;
 		if (ev.deltaY > 0) {
 			zoom_out();
@@ -174,15 +166,13 @@
 		}
 	}
 
-	function onkeydown(ev: KeyboardEvent) {
+	function onkeydown(ev) {
 		if (ev.code == 'Space') {
 			//generate_palette();
 		}
 	}
 
 	onMount(() => {
-		load_palette();
-
 		window.addEventListener('keydown', onkeydown);
 		window.addEventListener('wheel', onmousewheel);
 		return () => {
@@ -211,84 +201,82 @@
 </div> -->
 
 <Menu />
-{#if palette}
-	<div class="flex h-screen font-medium">
-		{#each palette.colors as color, i}
-			<div
-				class={['group/color relative h-full min-w-42 flex-1']}
-				style="background-color: {color.hex};"
-			>
-				{#if i == 0}
-					<AddColorButton first onclick={() => add_color(0)} />
-				{/if}
+<div class="flex h-screen font-medium">
+	{#each palette.colors as color, i}
+		<div
+			class={['group/color relative h-full min-w-42 flex-1']}
+			style="background-color: {color.hex};"
+		>
+			{#if i == 0}
+				<AddColorButton first onclick={() => add_color(0)} />
+			{/if}
 
-				<div class={['pointer-events-none relative z-40 flex h-full items-end']}>
-					<div
-						class={['py-1.5- pointer-events-auto w-full rounded px-2.5 pb-2']}
-						style="background-color: {scale.color == color ? color.hex : 'transparent'}"
-					>
-						<div class={['space-y-8 pb-16', color.dark && 'invert']}>
-							<div class=" group-hover/color:opacity-100">
-								<!-- <button class={[sx.button, 'mt-2 flex w-full items-center justify-center gap-1.5']}>
+			<div class={['pointer-events-none relative z-40 flex h-full items-end']}>
+				<div
+					class={['py-1.5- pointer-events-auto w-full rounded px-2.5 pb-2']}
+					style="background-color: {scale.color == color ? color.hex : 'transparent'}"
+				>
+					<div class={['space-y-8 pb-16', color.dark && 'invert']}>
+						<div class=" group-hover/color:opacity-100">
+							<!-- <button class={[sx.button, 'mt-2 flex w-full items-center justify-center gap-1.5']}>
 									<span class="col-span-2">{color.hex}</span>
 								</button> -->
 
-								<div class="grid grid-cols-3 gap-1">
-									<button class={[sx.button, sx.icon_button]}>
-										<IconEdit />
-									</button>
-									<!-- <button class={[sx.card]}>
+							<div class="grid grid-cols-3 gap-1">
+								<button class={[sx.button, sx.icon_button]}>
+									<IconEdit />
+								</button>
+								<!-- <button class={[sx.card]}>
 										<IconMore />
 									</button> -->
-									<button class={[sx.button, sx.icon_button]}>
-										<IconCopy />
-									</button>
-									<button class={[sx.button, sx.icon_button]} onclick={() => delete_color(color)}>
-										<IconClose />
-									</button>
+								<button class={[sx.button, sx.icon_button]}>
+									<IconCopy />
+								</button>
+								<button class={[sx.button, sx.icon_button]} onclick={() => delete_color(color)}>
+									<IconClose />
+								</button>
 
-									{#each ['h', 'v', 's'] as param}
-										<button class={[sx.button]} onclick={() => set_shader(color, param)}>
-											{color[param]}
-										</button>
-									{/each}
-								</div>
+								{#each ['h', 'v', 's'] as param}
+									<button class={[sx.button]} onclick={() => set_shader(color, param)}>
+										{color[param]}
+									</button>
+								{/each}
 							</div>
-							<input
-								onblur={(ev) => update_color_name(i, ev.currentTarget.value)}
-								class={[
-									'w-full rounded-md px-2 py-1 text-center text-lg ring-0 ring-white/30 outline-0 focus:ring-1'
-								]}
-								type="text"
-								value={color.name}
-							/>
 						</div>
+						<input
+							onblur={(ev) => update_color_name(i, ev.currentTarget.value)}
+							class={[
+								'w-full rounded-md px-2 py-1 text-center text-lg ring-0 ring-white/30 outline-0 focus:ring-1'
+							]}
+							type="text"
+							value={color.name}
+						/>
 					</div>
 				</div>
-				{#if i != palette.colors.length - 1}
-					<AddColorButton onclick={() => add_color(i + 1)} />
-				{:else}
-					<AddColorButton last onclick={() => add_color(palette.colors.length)} />
-				{/if}
-				{#if scale.color == color}
-					<div class="absolute inset-0 z-100 flex flex-col">
-						{#each scale.shades as shade}
-							<div
-								onpointerdown={() => replace_color(color, shade)}
-								class="group flex w-full flex-1 cursor-pointer items-center justify-center"
-								style="background-color: {shade.hex}; color: {shade.l > 22 ? 'black' : 'white'}"
-							>
-								{#if shade.hex == color.hex}
-									<div class="absolute group-hover:opacity-0">●</div>
-								{/if}
-								<div class="opacity-0 group-hover:opacity-100">
-									{shade[scale.param]}
-								</div>
-							</div>
-						{/each}
-					</div>
-				{/if}
 			</div>
-		{/each}
-	</div>
-{/if}
+			{#if i != palette.colors.length - 1}
+				<AddColorButton onclick={() => add_color(i + 1)} />
+			{:else}
+				<AddColorButton last onclick={() => add_color(palette.colors.length)} />
+			{/if}
+			{#if scale.color == color}
+				<div class="absolute inset-0 z-100 flex flex-col">
+					{#each scale.shades as shade}
+						<div
+							onpointerdown={() => replace_color(color, shade)}
+							class="group flex w-full flex-1 cursor-pointer items-center justify-center"
+							style="background-color: {shade.hex}; color: {shade.l > 22 ? 'black' : 'white'}"
+						>
+							{#if shade.hex == color.hex}
+								<div class="absolute group-hover:opacity-0">●</div>
+							{/if}
+							<div class="opacity-0 group-hover:opacity-100">
+								{shade[scale.param]}
+							</div>
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
+	{/each}
+</div>

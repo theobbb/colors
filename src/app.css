@@ -3,4 +3,11 @@
 html {
 	background-color: black;
 	color: white;
+
+	/* font-family: 'vcr-osd-mono'; */
+}
+
+@font-face {
+	font-family: 'vcr-osd-mono';
+	src: url('/fonts/vcr-osd-mono.woff2');
 }
